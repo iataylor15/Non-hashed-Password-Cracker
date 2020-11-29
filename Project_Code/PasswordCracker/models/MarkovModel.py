@@ -1,6 +1,8 @@
 from _collections import defaultdict
 import numpy as np
 
+__author__ = "Isaac Taylor"
+
 
 class MarkovModel:
     # store text
@@ -63,7 +65,8 @@ class MarkovModel:
         return result
 
     def ngram_prob(self, ngram: str) -> float:
-        # returns probability of an ngram ex.  P(password) = P(pa)P(s|pa)P(s|as)P(w|ss)P(o|sw)P(r|wo)P(d|or)
+        # returns probability of a ngram ex. when models order is 2:
+        # P(password) = P(pa)P(s|pa)P(s|as)P(w|ss)P(o|sw)P(r|wo)P(d|or)
         k = self.__order
         n = len(ngram)
         prob = 0.0
