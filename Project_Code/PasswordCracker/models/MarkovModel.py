@@ -4,7 +4,7 @@ import numpy as np
 __author__ = "Isaac Taylor"
 
 
-class MarkovModel:
+class MarkovModel(object):
     # store text
     __text: list
     # order of the model
@@ -15,6 +15,8 @@ class MarkovModel:
     __transitions: defaultdict
     # unique list of characters
     __unique_chars: defaultdict
+    # stores ngrams (memoization)
+    __ngrams: defaultdict
 
     def __init__(self, text: str, k: int):
         # creating a markov model of order k
