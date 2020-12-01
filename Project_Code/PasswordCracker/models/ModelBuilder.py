@@ -14,14 +14,14 @@ __author__ = "Isaac Taylor"
 class ModelBuilder:
     __password_data: pd.DataFrame
     __markov: MarkovModel
-    # stores least likely password probability
+    # stores lowest non zero password probability
     __min_prob: float
     __FILES = ['../../../Datasets/000webhost.txt', '../../../Datasets/ignis-1M.txt', '../../../Datasets/myspace.txt',
                '../../../Datasets/hotmail.txt']
     __STORED_DATA = '../../../Datasets/combined-data.csv'
     __STORED_MODEL = '../datastore/markov.pkl'
 
-    def __init__(self, use_stored: bool = False):
+    def __init__(self, use_stored: bool = True):
         if use_stored:
             try:
                 # opening existing markov model data
@@ -80,6 +80,7 @@ class ModelBuilder:
         return self.__password_data
 
     def insert_password(self, pwd: str):
+        # insert password into dataframe
         prob = self.__markov.ngram_prob(pwd)
         row = [pwd, len(pwd), sum([sum(map(str.isupper, x)) for x in pwd]),
                sum([sum(map(str.islower, x)) for x in pwd]),
@@ -98,30 +99,46 @@ class ModelBuilder:
         self.__password_data['tries'] = [i + 1 for i in range(len(self.__password_data))]
 
     def predict_tries(self, pwd: str) -> int:
-        df1 = self.__password_data
-        df1['tries'] = [i + 1 for i in range(len(df1))]
+        # model where unlikely passwords were considered
+
         prob = self.__markov.ngram_prob(pwd)
         if prob < 0:
             prob = self.__min_prob * 10 ** -1
         log2_prob = np.log2(prob)
-        poly_5 = smf.ols(formula='tries ~ 1 + log2_prob + I(log2_prob ** 2.0) + I(log2_prob ** 3.0) + '
-                                 'I(log2_prob ** 4.0) + I(log2_prob ** 5.0)', data=df1).fit()
-        result = int(poly_5.params['Intercept'] + (poly_5.params['log2_prob']) * log2_prob)
-        if result < 0:
+        poly_5 = int(-1692525.4428736526 + (-99892.57855991341) * (log2_prob) +
+                     (-99892.57855991341) * (log2_prob) ** 2 + (-99892.57855991341) * (log2_prob) ** 3
+                     + (-99892.57855991341) * (log2_prob) ** 4 + (-99892.57855991341) * (log2_prob) ** 5)
+        if poly_5 < 0:
             return 1
         else:
-            return result
+            return poly_5
 
-    def search(self, pwd: str):
+    def predict_tries_improved(self, pwd: str) -> int:
+        # model where only likely passwords were considered
+        prob = self.__markov.ngram_prob(pwd)
+        if prob < 0:
+            prob = self.__min_prob * 10 ** -1
+        log2_prob = np.log2(prob)
+        poly_4 = int(-391522.0734093817 + 20015.215712990263 * log2_prob +
+                     20015.215712990263 * log2_prob ** 2 + 280790.21485644934 * log2_prob ** 3
+                     + 20015.215712990263 * log2_prob ** 4)
+        if poly_4 < 0:
+            return 1
+        else:
+            return poly_4
+
+    def search(self, pwd: str) -> dict:
+        # search data for password
         i = 0
         pwds = self.__password_data['password'].values
         for x in pwds:
             if x == pwd:
-                return {'found': True, 'tries': i + 1}
+                return {'found': True, 'predicted_tries': self.predict_tries_improved(pwd), 'actual_tries': i + 1}
             i += 1
-        return {'found': False, 'tries': i + 1}
+        return {'found': False, 'predicted_tries': self.predict_tries_improved(pwd), 'actual_tries': i + 1}
 
     def load_model(self, filename: str) -> MarkovModel:
+        # loads a model
         model: MarkovModel
         with open(filename, 'rb') as input:
             model = pickle.load(input)
@@ -131,3 +148,5 @@ class ModelBuilder:
         # saves an existing model
         with open(filename, 'wb') as output:
             pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
+
+

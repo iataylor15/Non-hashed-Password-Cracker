@@ -15,8 +15,6 @@ class MarkovModel(object):
     __transitions: defaultdict
     # unique list of characters
     __unique_chars: defaultdict
-    # stores ngrams (memoization)
-    __ngrams: defaultdict
 
     def __init__(self, text: str, k: int):
         # creating a markov model of order k
