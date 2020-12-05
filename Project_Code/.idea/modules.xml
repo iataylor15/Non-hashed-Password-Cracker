@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Project_Code.iml" filepath="$PROJECT_DIR$/.idea/Project_Code.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Password-Cracker.iml" filepath="$PROJECT_DIR$/.idea/Password-Cracker.iml" />
     </modules>
   </component>
 </project>
