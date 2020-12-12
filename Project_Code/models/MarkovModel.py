@@ -55,7 +55,6 @@ class MarkovModel(object):
             return rand_gen.choice(self.__unique_chars, 1, p=np.array([self.__transitions[kgram, x]
                                                                        for x in self.__unique_chars]) / total)
 
-
     def ngram_prob(self, ngram: str) -> float:
         default = .00001
         # returns probability of a ngram ex. when models order is 2:
