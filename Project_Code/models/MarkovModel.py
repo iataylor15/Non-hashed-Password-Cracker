@@ -46,15 +46,6 @@ class MarkovModel(object):
         if self.is_order(kgram):
             return self.__transitions[kgram, c]
 
-    def rand(self, kgram: str):
-        # returns random character following given kgram
-        if self.is_order(kgram):
-            total = float(self.freq_a(kgram))
-            # creating a random generator
-            rand_gen = np.random.Generator(np.random.PCG64())
-            return rand_gen.choice(self.__unique_chars, 1, p=np.array([self.__transitions[kgram, x]
-                                                                       for x in self.__unique_chars]) / total)
-
     def ngram_prob(self, ngram: str) -> float:
         default = .00001
         # returns probability of a ngram ex. when models order is 2:
