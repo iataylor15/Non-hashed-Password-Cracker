@@ -55,15 +55,6 @@ class MarkovModel(object):
             return rand_gen.choice(self.__unique_chars, 1, p=np.array([self.__transitions[kgram, x]
                                                                        for x in self.__unique_chars]) / total)
 
-    def gen(self, kgram: str, T: int) -> str:
-        # return a string of length T characters by simulating a trajectory through the Markov chain
-        result = ''
-        if self.is_order(kgram):
-            for i in range(T):
-                random_char = self.rand(kgram)[0]
-                kgram = kgram[1:] + random_char
-                result += random_char
-        return result
 
     def ngram_prob(self, ngram: str) -> float:
         default = .00001
