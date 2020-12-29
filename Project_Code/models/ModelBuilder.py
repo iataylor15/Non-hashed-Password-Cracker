@@ -6,8 +6,6 @@ import pandas as pd
 
 from models.MarkovModel import MarkovModel
 
-ssl._create_default_https_context = ssl._create_unverified_context
-
 __author__ = "Isaac Taylor"
 
 
